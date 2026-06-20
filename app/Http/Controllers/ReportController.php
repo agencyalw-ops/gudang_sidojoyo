@@ -16,12 +16,10 @@ class ReportController extends Controller
         $query = DB::table('transactions')
             ->orderBy('created_at', 'desc');
 
-        // Filter by cashier name if provided
         if ($request->filled('kasir_name')) {
             $query->where('kasir_name', $request->kasir_name);
         }
 
-        // Filter by date range if provided
         if ($request->filled('start_date')) {
             $query->whereDate('created_at', '>=', $request->start_date);
         }
@@ -32,8 +30,8 @@ class ReportController extends Controller
 
         $transactions = $query->get();
 
-        // Get transaction items
         $transactionIds = $transactions->pluck('id');
+
         $items = DB::table('transaction_items')
             ->join('products', 'transaction_items.product_id', '=', 'products.id')
             ->select(
@@ -51,7 +49,6 @@ class ReportController extends Controller
             $transaction->items = $items->get($transaction->id, collect());
         }
 
-        // Get list of all cashiers for filter dropdown
         $cashiers = DB::table('transactions')
             ->distinct()
             ->pluck('kasir_name')
@@ -65,24 +62,25 @@ class ReportController extends Controller
      */
     public function kasirPerformance(Request $request)
     {
-        // Get current month by default, or specified month
         $month = $request->input('month', now()->month);
-        $year = $request->input('year', now()->year);
+        $year  = $request->input('year', now()->year);
 
-        // Get all transactions for the specified month
         $startDate = Carbon::createFromDate($year, $month, 1)->startOfMonth();
-        $endDate = Carbon::createFromDate($year, $month, 1)->endOfMonth();
+        $endDate   = Carbon::createFromDate($year, $month, 1)->endOfMonth();
 
         $transactions = DB::table('transactions')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->get();
 
-        // Group transactions by cashier
         $cashierPerformance = [];
+
         foreach ($transactions as $transaction) {
-            if (!isset($cashierPerformance[$transaction->kasir_name])) {
-                $cashierPerformance[$transaction->kasir_name] = [
-                    'kasir_name' => $transaction->kasir_name,
+
+            $name = $transaction->kasir_name;
+
+            if (!isset($cashierPerformance[$name])) {
+                $cashierPerformance[$name] = [
+                    'kasir_name' => $name,
                     'total_transactions' => 0,
                     'total_sales' => 0,
                     'total_items' => 0,
@@ -91,39 +89,41 @@ class ReportController extends Controller
                 ];
             }
 
-            $cashierPerformance[$transaction->kasir_name]['total_transactions']++;
-            $cashierPerformance[$transaction->kasir_name]['total_sales'] += $transaction->total;
-            $cashierPerformance[$transaction->kasir_name]['transactions'][] = $transaction;
+            $cashierPerformance[$name]['total_transactions']++;
+            $cashierPerformance[$name]['total_sales'] += (float) $transaction->total;
+            $cashierPerformance[$name]['transactions'][] = $transaction;
         }
 
-        // Calculate average and total items
         foreach ($cashierPerformance as &$performance) {
+
             if ($performance['total_transactions'] > 0) {
-                $performance['average_transaction'] = round($performance['total_sales'] / $performance['total_transactions']);
+                $performance['average_transaction'] =
+                    (int) round(
+                        $performance['total_sales'] / $performance['total_transactions']
+                    );
             }
 
-            // Get total items sold by this cashier
             $transactionIds = collect($performance['transactions'])->pluck('id');
-            $totalItems = DB::table('transaction_items')
+
+            $performance['total_items'] = DB::table('transaction_items')
                 ->whereIn('transaction_id', $transactionIds)
                 ->sum('qty');
-            $performance['total_items'] = $totalItems;
         }
 
-        // Sort by total sales descending
         uasort($cashierPerformance, function ($a, $b) {
             return $b['total_sales'] <=> $a['total_sales'];
         });
 
-        // Calculate overall statistics
-        $totalSales = array_sum(array_column($cashierPerformance, 'total_sales'));
+        $totalSales = array_sum(array_map('floatval', array_column($cashierPerformance, 'total_sales')));
         $totalTransactions = array_sum(array_column($cashierPerformance, 'total_transactions'));
-        $averageSales = $totalTransactions > 0 ? round($totalSales / $totalTransactions) : 0;
+        $averageSales = $totalTransactions > 0 ? (int) round($totalSales / $totalTransactions) : 0;
 
-        // Get available months for filter
+        // PostgreSQL SAFE VERSION
         $availableMonths = DB::table('transactions')
-            ->selectRaw('DISTINCT YEAR(created_at) as year, MONTH(created_at) as month')
-            ->orderByRaw('YEAR(created_at) DESC, MONTH(created_at) DESC')
+            ->selectRaw('EXTRACT(YEAR FROM created_at) as year, EXTRACT(MONTH FROM created_at) as month')
+            ->distinct()
+            ->orderByRaw('EXTRACT(YEAR FROM created_at) DESC')
+            ->orderByRaw('EXTRACT(MONTH FROM created_at) DESC')
             ->limit(12)
             ->get();
 
@@ -144,20 +144,19 @@ class ReportController extends Controller
     public function kasirDetail($kasirName, Request $request)
     {
         $month = $request->input('month', now()->month);
-        $year = $request->input('year', now()->year);
+        $year  = $request->input('year', now()->year);
 
         $startDate = Carbon::createFromDate($year, $month, 1)->startOfMonth();
-        $endDate = Carbon::createFromDate($year, $month, 1)->endOfMonth();
+        $endDate   = Carbon::createFromDate($year, $month, 1)->endOfMonth();
 
-        // Get all transactions for this cashier in the specified month
         $transactions = DB::table('transactions')
             ->where('kasir_name', $kasirName)
             ->whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Get transaction items
         $transactionIds = $transactions->pluck('id');
+
         $items = DB::table('transaction_items')
             ->join('products', 'transaction_items.product_id', '=', 'products.id')
             ->select(
@@ -175,10 +174,13 @@ class ReportController extends Controller
             $transaction->items = $items->get($transaction->id, collect());
         }
 
-        // Calculate statistics
-        $totalSales = $transactions->sum('total');
+        $totalSales = (float) $transactions->sum('total');
         $totalTransactions = $transactions->count();
-        $averageTransaction = $totalTransactions > 0 ? round($totalSales / $totalTransactions) : 0;
+
+        $averageTransaction = $totalTransactions > 0
+            ? (int) round($totalSales / $totalTransactions)
+            : 0;
+
         $totalItems = DB::table('transaction_items')
             ->whereIn('transaction_id', $transactionIds)
             ->sum('qty');
@@ -193,5 +195,55 @@ class ReportController extends Controller
             'averageTransaction',
             'totalItems'
         ));
+    }
+
+    /**
+     * CANCEL TRANSACTION + RESTORE STOCK (SAFE VERSION)
+     */
+    public function cancelTransaction($transactionId)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $transaction = DB::table('transactions')
+                ->where('id', $transactionId)
+                ->first();
+
+            if (!$transaction) {
+                return back()->with('error', 'Transaction not found');
+            }
+
+            if (($transaction->status ?? 'completed') === 'cancelled') {
+                return back()->with('error', 'Already cancelled');
+            }
+
+            $items = DB::table('transaction_items')
+                ->where('transaction_id', $transactionId)
+                ->get();
+
+            foreach ($items as $item) {
+                DB::table('products')
+                    ->where('id', $item->product_id)
+                    ->increment('stock', (int) $item->qty);
+            }
+
+            DB::table('transactions')
+                ->where('id', $transactionId)
+                ->update([
+                    'status' => 'cancelled',
+                    'updated_at' => now()
+                ]);
+
+            DB::commit();
+
+            return back()->with('success', 'Transaction cancelled & stock restored');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()->with('error', $e->getMessage());
+        }
     }
 }

@@ -32,7 +32,7 @@ Route::middleware('role:owner')->group(function () {
     Route::get('/admin/users/create', [UserController::class, 'create']);
     Route::post('/admin/users', [UserController::class, 'store']);
     Route::get('/admin/users/{id}/edit', [UserController::class, 'edit']);
-    Route::post('/admin/users/{id}', [UserController::class, 'update']);
+    Route::put('/admin/users/{id}', [UserController::class, 'update']);
     Route::delete('/admin/users/{id}', [UserController::class, 'destroy']);
 });
 
@@ -60,8 +60,9 @@ Route::middleware('role:owner,admin')->group(function () {
     Route::delete('/admin/products/{id}', [ProductController::class, 'destroy']);
     
     // Transaction Management (Delete)
-    Route::post('/admin/transactions/delete/{id}', [AdminController::class, 'deleteTransaction']);
-    
+    Route::post('/transaction/{id}/cancel', [ReportController::class, 'cancelTransaction']);
+    Route::post('/transaction/{id}/cancel', [ReportController::class, 'cancelTransaction'])
+    ->name('transaction.cancel');
     // Reporting Routes
     Route::get('/reports/kasir-history', [ReportController::class, 'kasirHistory']);
     Route::get('/reports/kasir-performance', [ReportController::class, 'kasirPerformance']);
@@ -81,3 +82,4 @@ Route::middleware('role:kasir')->group(function () {
     Route::post('/kasir/cart/clear', [kasirController::class, 'clearCart']);
     Route::post('/kasir/checkout', [kasirController::class, 'checkout']);
 });
+
