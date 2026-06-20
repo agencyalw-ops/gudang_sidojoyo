@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\kasirController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,11 @@ Route::middleware('role:owner,admin')->group(function () {
     
     // Transaction Management (Delete)
     Route::post('/admin/transactions/delete/{id}', [AdminController::class, 'deleteTransaction']);
+    
+    // Reporting Routes
+    Route::get('/reports/kasir-history', [ReportController::class, 'kasirHistory']);
+    Route::get('/reports/kasir-performance', [ReportController::class, 'kasirPerformance']);
+    Route::get('/reports/kasir-detail/{kasirName}', [ReportController::class, 'kasirDetail']);
 });
 
 /*
