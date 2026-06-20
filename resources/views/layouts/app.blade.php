@@ -169,11 +169,12 @@
                 @if(session('role') == 'admin')
                     <a href="/admin">Dashboard</a>
                     <a href="/admin/products">Products</a>
-                    <a href="/admin/users">Users</a>
                 @elseif(session('role') == 'kasir')
                     <a href="/kasir">POS</a>
                 @elseif(session('role') == 'owner')
                     <a href="/owner">Dashboard</a>
+                    <a href="/admin/products">Products</a>
+                    <a href="/admin/users">Users</a>
                 @endif
                 <a href="/logout" class="btn btn-danger">Logout</a>
             @else

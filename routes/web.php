@@ -26,7 +26,7 @@ Route::get('/logout', [AdminAuthController::class, 'logout']);
 Route::middleware('role:owner')->group(function () {
     Route::get('/owner', [OwnerController::class, 'dashboard']);
     
-    // User Management
+    // User Management (Owner Only)
     Route::get('/admin/users', [UserController::class, 'index']);
     Route::get('/admin/users/create', [UserController::class, 'create']);
     Route::post('/admin/users', [UserController::class, 'store']);
@@ -42,7 +42,6 @@ Route::middleware('role:owner')->group(function () {
 */
 Route::middleware('role:admin')->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard']);
-    Route::post('/admin/transactions/delete/{id}', [AdminController::class, 'deleteTransaction']);
 });
 
 /*
@@ -51,12 +50,16 @@ Route::middleware('role:admin')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware('role:owner,admin')->group(function () {
+    // Product Management
     Route::get('/admin/products', [ProductController::class, 'index']);
     Route::get('/admin/products/create', [ProductController::class, 'create']);
     Route::post('/admin/products', [ProductController::class, 'store']);
     Route::get('/admin/products/{id}/edit', [ProductController::class, 'edit']);
     Route::put('/admin/products/{id}', [ProductController::class, 'update']);
     Route::delete('/admin/products/{id}', [ProductController::class, 'destroy']);
+    
+    // Transaction Management (Delete)
+    Route::post('/admin/transactions/delete/{id}', [AdminController::class, 'deleteTransaction']);
 });
 
 /*

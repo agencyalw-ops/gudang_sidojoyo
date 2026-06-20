@@ -26,7 +26,10 @@
                     <th>Kasir</th>
                     <th>Total</th>
                     <th>Detail Barang</th>
+                    <th>Bayar</th>
+                    <th>Kembalian</th>
                     <th>Waktu</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -42,11 +45,19 @@
                             </div>
                         @endforeach
                     </td>
+                    <td>Rp {{ number_format($t->money) }}</td>
+                    <td>Rp {{ number_format($t->change_money) }}</td>
                     <td style="font-size: 0.875rem; color: var(--text-muted);">{{ $t->created_at }}</td>
+                    <td>
+                        <form method="POST" action="/admin/transactions/delete/{{ $t->id }}" onsubmit="return confirm('Hapus transaksi dan kembalikan stok?')">
+                            @csrf
+                            <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Hapus</button>
+                        </form>
+                    </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" style="text-align: center; color: var(--text-muted);">Belum ada transaksi</td>
+                    <td colspan="8" style="text-align: center; color: var(--text-muted);">Belum ada transaksi</td>
                 </tr>
                 @endforelse
             </tbody>
