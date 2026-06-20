@@ -13,32 +13,26 @@ class AdminController extends Controller
             ->limit(20)
             ->get();
 
-        foreach ($transactions as $transaction) {
+        $transactionIds = $transactions->pluck('id');
 
-            $transaction->items = DB::table('transaction_items')
-                ->join(
-                    'products',
-                    'transaction_items.product_id',
-                    '=',
-                    'products.id'
-                )
-                ->select(
-                    'products.name',
-                    'transaction_items.qty',
-                    'transaction_items.price',
-                    'transaction_items.subtotal'
-                )
-                ->where(
-                    'transaction_items.transaction_id',
-                    $transaction->id
-                )
-                ->get();
+        $items = DB::table('transaction_items')
+            ->join('products', 'transaction_items.product_id', '=', 'products.id')
+            ->select(
+                'transaction_items.transaction_id',
+                'products.name',
+                'transaction_items.qty',
+                'transaction_items.price',
+                'transaction_items.subtotal'
+            )
+            ->whereIn('transaction_items.transaction_id', $transactionIds)
+            ->get()
+            ->groupBy('transaction_id');
+
+        foreach ($transactions as $transaction) {
+            $transaction->items = $items->get($transaction->id, collect());
         }
 
-        return view(
-            'admin.dashboard',
-            compact('transactions')
-        );
+        return view('admin.dashboard', compact('transactions'));
     }
 
     public function deleteTransaction($id)
@@ -46,13 +40,11 @@ class AdminController extends Controller
         DB::beginTransaction();
 
         try {
-
             $items = DB::table('transaction_items')
                 ->where('transaction_id', $id)
                 ->get();
 
             foreach ($items as $item) {
-
                 DB::table('products')
                     ->where('id', $item->product_id)
                     ->increment('stock', $item->qty);
@@ -68,21 +60,11 @@ class AdminController extends Controller
 
             DB::commit();
 
-            return redirect('/admin')
-                ->with(
-                    'success',
-                    'Transaksi dihapus dan stok dikembalikan'
-                );
+            return redirect('/admin')->with('success', 'Transaksi dihapus dan stok dikembalikan');
 
         } catch (\Exception $e) {
-
             DB::rollBack();
-
-            return back()
-                ->with(
-                    'error',
-                    $e->getMessage()
-                );
+            return back()->with('error', 'Gagal menghapus transaksi: ' . $e->getMessage());
         }
     }
 }

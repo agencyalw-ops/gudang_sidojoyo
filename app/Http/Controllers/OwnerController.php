@@ -12,31 +12,25 @@ class OwnerController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        foreach ($transactions as $transaction) {
+        $transactionIds = $transactions->pluck('id');
 
-            $transaction->items = DB::table('transaction_items')
-                ->join(
-                    'products',
-                    'transaction_items.product_id',
-                    '=',
-                    'products.id'
-                )
-                ->where(
-                    'transaction_items.transaction_id',
-                    $transaction->id
-                )
-                ->select(
-                    'products.name',
-                    'transaction_items.qty',
-                    'transaction_items.price',
-                    'transaction_items.subtotal'
-                )
-                ->get();
+        $items = DB::table('transaction_items')
+            ->join('products', 'transaction_items.product_id', '=', 'products.id')
+            ->select(
+                'transaction_items.transaction_id',
+                'products.name',
+                'transaction_items.qty',
+                'transaction_items.price',
+                'transaction_items.subtotal'
+            )
+            ->whereIn('transaction_items.transaction_id', $transactionIds)
+            ->get()
+            ->groupBy('transaction_id');
+
+        foreach ($transactions as $transaction) {
+            $transaction->items = $items->get($transaction->id, collect());
         }
 
-        return view(
-            'owner.dashboard',
-            compact('transactions')
-        );
+        return view('owner.dashboard', compact('transactions'));
     }
 }

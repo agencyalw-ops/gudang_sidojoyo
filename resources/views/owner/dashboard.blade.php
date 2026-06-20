@@ -1,217 +1,56 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Owner Dashboard</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+@extends('layouts.app')
 
-</head>
-
-<body>
-
-<div class="topbar">
-
-    <h2>👑 Owner Dashboard</h2>
-
-    <div>
-        Selamat datang,
-        <b>{{ session('name') }}</b>
+@section('content')
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="card" style="margin-bottom: 0;">
+        <div style="color: var(--text-muted); font-size: 0.875rem;">Total Transaksi</div>
+        <div style="font-size: 2rem; font-weight: bold;">{{ count($transactions) }}</div>
     </div>
-
+    <div class="card" style="margin-bottom: 0;">
+        <div style="color: var(--text-muted); font-size: 0.875rem;">Total Pendapatan</div>
+        <div style="font-size: 2rem; font-weight: bold; color: var(--success);">Rp {{ number_format($transactions->sum('total')) }}</div>
+    </div>
+    <div class="card" style="margin-bottom: 0;">
+        <div style="color: var(--text-muted); font-size: 0.875rem;">Rata-rata Transaksi</div>
+        <div style="font-size: 2rem; font-weight: bold;">Rp {{ number_format($transactions->avg('total') ?? 0) }}</div>
+    </div>
 </div>
 
-<div class="container">
-
-    <!-- MENU -->
-
-    <div class="menu">
-
-        <a href="/admin/users">
-            👥 Kelola User
-        </a>
-
-        <a href="/admin/users/create">
-            ➕ Tambah User
-        </a>
-
-        <a href="/admin/products">
-            📦 Kelola Product
-        </a>
-
-        <a href="/logout" class="logout">
-            🚪 Logout
-        </a>
-
-    </div>
-
-    <!-- STATISTIK -->
-
-    @php
-
-        $totalTransaksi = count($transactions);
-
-        $totalPenjualan = collect($transactions)->sum('total');
-
-    @endphp
-
-    <div class="stats">
-
-        <div class="stat-box">
-            <p>Total Transaksi</p>
-            <h2>{{ $totalTransaksi }}</h2>
-        </div>
-
-        <div class="stat-box">
-            <p>Total Penjualan</p>
-            <h2>
-                Rp {{ number_format($totalPenjualan) }}
-            </h2>
-        </div>
-
-    </div>
-
-    <!-- HISTORY -->
-
-    <div class="card">
-
-        <h3>📜 History Transaksi</h3>
-
+<div class="card">
+    <h3 style="margin-top: 0; margin-bottom: 1.5rem;">📊 Laporan Penjualan Keseluruhan</h3>
+    <div style="overflow-x: auto;">
         <table>
-
-            <tr>
-                <th>Invoice</th>
-                <th>Kasir</th>
-                <th>Total</th>
-                <th>Money</th>
-                <th>Change</th>
-                <th>Tanggal</th>
-                <th>Detail</th>
-            </tr>
-
-            @forelse($transactions as $t)
-
-            <tr>
-
-                <td>{{ $t->invoice }}</td>
-
-                <td>{{ $t->kasir_name }}</td>
-
-                <td>
-                    Rp {{ number_format($t->total) }}
-                </td>
-
-                <td>
-                    Rp {{ number_format($t->money) }}
-                </td>
-
-                <td>
-                    Rp {{ number_format($t->change_money) }}
-                </td>
-
-                <td>
-                    {{ $t->created_at }}
-                </td>
-
-                <td>
-
-                    <button
-                        class="btn-detail"
-                        onclick="toggleDetail({{ $t->id }})"
-                    >
-                        Lihat
-                    </button>
-
-                </td>
-
-            </tr>
-
-            <tr
-                id="detail-{{ $t->id }}"
-                class="detail-row"
-                style="display:none;"
-            >
-
-                <td colspan="7">
-
-                    <table
-                        class="detail-table"
-                        width="100%"
-                    >
-
-                        <tr>
-                            <th>Barang</th>
-                            <th>Qty</th>
-                            <th>Harga</th>
-                            <th>Subtotal</th>
-                        </tr>
-
+            <thead>
+                <tr>
+                    <th>Invoice</th>
+                    <th>Kasir</th>
+                    <th>Total</th>
+                    <th>Detail Barang</th>
+                    <th>Waktu</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($transactions as $t)
+                <tr>
+                    <td><span class="badge" style="background: #334155;">{{ $t->invoice }}</span></td>
+                    <td>{{ $t->kasir_name }}</td>
+                    <td style="font-weight: bold; color: var(--success);">Rp {{ number_format($t->total) }}</td>
+                    <td>
                         @foreach($t->items as $item)
-
-                        <tr>
-
-                            <td>
-                                {{ $item->name }}
-                            </td>
-
-                            <td>
-                                {{ $item->qty }}
-                            </td>
-
-                            <td>
-                                Rp {{ number_format($item->price) }}
-                            </td>
-
-                            <td>
-                                Rp {{ number_format($item->subtotal) }}
-                            </td>
-
-                        </tr>
-
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">
+                                {{ $item->name }} (x{{ $item->qty }})
+                            </div>
                         @endforeach
-
-                    </table>
-
-                </td>
-
-            </tr>
-
-            @empty
-
-            <tr>
-
-                <td colspan="7">
-                    Belum ada transaksi
-                </td>
-
-            </tr>
-
-            @endforelse
-
+                    </td>
+                    <td style="font-size: 0.875rem; color: var(--text-muted);">{{ $t->created_at }}</td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted);">Belum ada transaksi</td>
+                </tr>
+                @endforelse
+            </tbody>
         </table>
-
     </div>
-
 </div>
-
-<script>
-
-function toggleDetail(id)
-{
-    let row =
-        document.getElementById(
-            'detail-' + id
-        );
-
-    if(row.style.display === 'none')
-    {
-        row.style.display = 'table-row';
-    }
-    else
-    {
-        row.style.display = 'none';
-    }
-}
-
-</script>
-
-</body>
-</html>
+@endsection

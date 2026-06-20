@@ -1,108 +1,142 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Kasir POS</title>
+@extends('layouts.app')
 
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-</head>
-
-<body>
-
-<!-- POPUP -->
-@if(session('success'))
-<div class="popup success" id="popup">{{ session('success') }}</div>
-@endif
-
-@if(session('error'))
-<div class="popup error" id="popup">{{ session('error') }}</div>
-@endif
-
-<script>
-    window.onload = () => {
-        let p = document.getElementById("popup");
-        if (p) {
-            p.style.display = "block";
-            setTimeout(() => p.style.display = "none", 3000);
-        }
+@section('content')
+<style>
+    .pos-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
     }
-</script>
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+    }
+    .product-card {
+        background: #334155;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #334155;
+    }
+    .qty-btn {
+        background: #475569;
+        color: white;
+        border: none;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+    }
+</style>
 
-<div class="topbar">
-    <div>🧾 Kasir POS</div>
-    <div style="display:flex;align-items:center;gap:15px;">
-        <span>👤 {{ session('name') }}</span>
-
-        <a href="/logout" class="logout-btn">
-            Logout
-        </a>
-    </div>
-</div>
-
-<div class="container">
-
-    <!-- PRODUCT -->
-    <div class="products">
-        <h3>Produk</h3>
-
-        <div class="product-grid">
-            @foreach($products as $p)
-            <div class="card">
-                <b>{{ $p->name }}</b><br>
-                Rp {{ number_format($p->price) }}<br>
-                Stock: {{ $p->stock }}
-
-                <form method="POST" action="/kasir/cart/add/{{ $p->id }}">
-                    @csrf
-                    <button class="btn">Tambah</button>
-                </form>
+<div class="pos-grid">
+    <div class="products-section">
+        <div class="card">
+            <h3 style="margin-top: 0;">📦 Daftar Produk</h3>
+            <div class="product-grid">
+                @foreach($products as $p)
+                <div class="product-card">
+                    <div>
+                        <div style="font-weight: bold;">{{ $p->name }}</div>
+                        <div style="color: var(--success); font-size: 0.875rem;">Rp {{ number_format($p->price) }}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Stok: {{ $p->stock }}</div>
+                    </div>
+                    <form method="POST" action="/kasir/cart/add/{{ $p->id }}" style="margin-top: 0.75rem;">
+                        @csrf
+                        <button class="btn btn-primary" style="width: 100%; font-size: 0.75rem;">Tambah</button>
+                    </form>
+                </div>
+                @endforeach
             </div>
-            @endforeach
         </div>
     </div>
 
-    <!-- CART -->
-    <div class="cart">
-        <h3>Cart</h3>
-
-        @php $total = 0; @endphp
-
-        @foreach($cart as $id => $c)
-            @php $total += $c['price'] * $c['qty']; @endphp
-
-            <div>
-                <b>{{ $c['name'] }}</b><br>
-
-                <form method="POST" action="/kasir/cart/min/{{ $id }}">
-                    @csrf <button>-</button>
-                </form>
-
-                {{ $c['qty'] }}
-
-                <form method="POST" action="/kasir/cart/add/{{ $id }}">
-                    @csrf <button>+</button>
-                </form>
+    <div class="cart-section">
+        <div class="card">
+            <h3 style="margin-top: 0;">🛒 Keranjang</h3>
+            @php $total = 0; @endphp
+            <div style="max-height: 400px; overflow-y: auto;">
+                @forelse($cart as $id => $c)
+                    @php $total += $c['price'] * $c['qty']; @endphp
+                    <div class="cart-item">
+                        <div>
+                            <div style="font-weight: 500;">{{ $c['name'] }}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Rp {{ number_format($c['price']) }}</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <form method="POST" action="/kasir/cart/min/{{ $id }}">
+                                @csrf <button class="qty-btn">-</button>
+                            </form>
+                            <span>{{ $c['qty'] }}</span>
+                            <form method="POST" action="/kasir/cart/add/{{ $id }}">
+                                @csrf <button class="qty-btn">+</button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <p style="text-align: center; color: var(--text-muted);">Keranjang kosong</p>
+                @endforelse
             </div>
-        @endforeach
 
-        <hr>
+            @if($total > 0)
+                <div style="margin-top: 1.5rem; border-top: 2px solid #334155; padding-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">
+                        <span>Total:</span>
+                        <span style="color: var(--success);">Rp {{ number_format($total) }}</span>
+                    </div>
 
-        <h3>Total: Rp {{ number_format($total) }}</h3>
+                    <form method="POST" action="/kasir/checkout">
+                        @csrf
+                        <div class="form-group">
+                            <label>Bayar (Tunai)</label>
+                            <input type="number" name="money" class="form-control" placeholder="Jumlah uang" required>
+                        </div>
+                        <button class="btn btn-success" style="width: 100%; margin-bottom: 0.5rem;">Proses Checkout</button>
+                    </form>
 
-        <form method="POST" action="/kasir/checkout">
-            @csrf
-            <input type="number" name="money" placeholder="Uang customer" required>
-            <button class="btn">Bayar</button>
-        </form>
-
-        <form method="POST" action="/kasir/cart/clear">
-            @csrf
-            <button class="btn danger">Clear</button>
-        </form>
+                    <form method="POST" action="/kasir/cart/clear">
+                        @csrf
+                        <button class="btn btn-danger" style="width: 100%; font-size: 0.75rem;">Kosongkan Keranjang</button>
+                    </form>
+                </div>
+            @endif
+        </div>
     </div>
 </div>
 
-<!-- transactions -->
-<x-transactions-table :transactions="$transactions" />
-
-</body>
-</html>
+<div class="card" style="margin-top: 1.5rem;">
+    <h3>🕒 Transaksi Terakhir</h3>
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Invoice</th>
+                    <th>Total</th>
+                    <th>Bayar</th>
+                    <th>Kembali</th>
+                    <th>Waktu</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($transactions as $t)
+                <tr>
+                    <td>{{ $t->invoice }}</td>
+                    <td style="color: var(--success); font-weight: bold;">Rp {{ number_format($t->total) }}</td>
+                    <td>Rp {{ number_format($t->money) }}</td>
+                    <td>Rp {{ number_format($t->change_money) }}</td>
+                    <td style="font-size: 0.875rem; color: var(--text-muted);">{{ $t->created_at }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@endsection

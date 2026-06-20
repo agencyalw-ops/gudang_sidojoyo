@@ -6,43 +6,27 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\kasirController;
 use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\AdminController;
+
 /*
 |--------------------------------------------------------------------------
-| PUBLIC
+| PUBLIC ROUTES
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', fn () => view('welcome'));
-
 Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AdminAuthController::class, 'login']);
 Route::get('/logout', [AdminAuthController::class, 'logout']);
 
 /*
 |--------------------------------------------------------------------------
-| DASHBOARD ROLE
+| OWNER ROUTES
 |--------------------------------------------------------------------------
 */
-
-Route::get(
-    '/owner',
-    [OwnerController::class, 'dashboard']
-)->middleware('role:owner');
-
-Route::get('/admin', fn () => view('admin.dashboard'))
-    ->middleware('role:admin');
-
-Route::get('/kasir', [kasirController::class, 'index'])
-    ->middleware('role:kasir');
-
-/*
-|--------------------------------------------------------------------------
-| OWNER USER MANAGEMENT
-|--------------------------------------------------------------------------
-*/
-
 Route::middleware('role:owner')->group(function () {
-
+    Route::get('/owner', [OwnerController::class, 'dashboard']);
+    
+    // User Management
     Route::get('/admin/users', [UserController::class, 'index']);
     Route::get('/admin/users/create', [UserController::class, 'create']);
     Route::post('/admin/users', [UserController::class, 'store']);
@@ -53,12 +37,20 @@ Route::middleware('role:owner')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| PRODUCT (OWNER + ADMIN)
+| ADMIN ROUTES
 |--------------------------------------------------------------------------
 */
+Route::middleware('role:admin')->group(function () {
+    Route::get('/admin', [AdminController::class, 'dashboard']);
+    Route::post('/admin/transactions/delete/{id}', [AdminController::class, 'deleteTransaction']);
+});
 
+/*
+|--------------------------------------------------------------------------
+| SHARED ROUTES (OWNER + ADMIN)
+|--------------------------------------------------------------------------
+*/
 Route::middleware('role:owner,admin')->group(function () {
-
     Route::get('/admin/products', [ProductController::class, 'index']);
     Route::get('/admin/products/create', [ProductController::class, 'create']);
     Route::post('/admin/products', [ProductController::class, 'store']);
@@ -69,34 +61,14 @@ Route::middleware('role:owner,admin')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| KASIR TRANSACTION
+| KASIR ROUTES
 |--------------------------------------------------------------------------
 */
-
-Route::middleware(['role:kasir'])->group(function () {
-
+Route::middleware('role:kasir')->group(function () {
     Route::get('/kasir', [kasirController::class, 'index']);
-
     Route::post('/kasir/cart/add/{id}', [kasirController::class, 'addToCart']);
     Route::post('/kasir/cart/min/{id}', [kasirController::class, 'decreaseQty']);
     Route::post('/kasir/cart/remove/{id}', [kasirController::class, 'removeItem']);
     Route::post('/kasir/cart/clear', [kasirController::class, 'clearCart']);
-
     Route::post('/kasir/checkout', [kasirController::class, 'checkout']);
-});
-
-
-
-use App\Http\Controllers\AdminController;
-
-Route::middleware('role:admin')->group(function () {
-
-    Route::get(
-        '/admin',
-        [AdminController::class, 'dashboard']
-    );
-    Route::post(
-        '/admin/transactions/delete/{id}',
-        [AdminController::class, 'deleteTransaction']
-    );
 });
