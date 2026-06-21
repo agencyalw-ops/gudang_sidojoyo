@@ -67,8 +67,8 @@
                         {{ $h->created_at->format('d/m/Y H:i:s') }}
                     </td>
                     <td>
-                        <a href="/admin/products/{{ $h->product->id }}/stock-history" style="text-decoration: none; color: var(--primary);">
-                            {{ $h->product->name }}
+                        <a href="/admin/products/{{ $h->product?->id }}/stock-history" style="text-decoration: none; color: var(--primary);">
+                            {{ $h->product?->name }}
                         </a>
                     </td>
 

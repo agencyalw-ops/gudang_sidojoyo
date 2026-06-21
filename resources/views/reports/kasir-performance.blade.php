@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => '📈 Kinerja Kasir Bulanan'])
 
 @section('content')
 <div style="margin-bottom: 2rem;">

@@ -5,197 +5,248 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Gudang Sidojoyo' }}</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
     <style>
-        /* Global CSS Improvements */
-        :root {
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --dark: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #ffffff;
-            --text-muted: #cbd5e1;
-            --danger: #ef4444;
-            --success: #22c55e;
+        :root{
+            --primary:#3b82f6;
+            --primary-soft:#e0f2fe;
+            --bg:#f4f6fb;
+            --sidebar:#ffffff;
+            --border:#e5e7eb;
+            --text:#0f172a;
+            --muted:#6b7280;
+            --danger:#ef4444;
+            --success:#22c55e;
         }
 
-        body {
-            background-color: var(--dark);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Segoe UI, sans-serif;
         }
 
-        .navbar {
-            background: var(--card-bg);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #334155;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        body{
+            background:var(--bg);
+            color:var(--text);
+            display:flex;
+            min-height:100vh;
         }
 
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-            text-decoration: none;
+        /* SIDEBAR */
+        .sidebar{
+            width:260px;
+            background:var(--sidebar);
+            border-right:1px solid var(--border);
+            display:flex;
+            flex-direction:column;
+            position:fixed;
+            top:0;
+            left:0;
+            height:100vh;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
+        .sidebar-header{
+            padding:1.5rem;
+            font-weight:800;
+            font-size:1.25rem;
+            color:var(--primary);
+            border-bottom:1px solid var(--border);
+            letter-spacing:0.5px;
         }
 
-        .nav-links a {
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
+        .sidebar-user{
+            padding:1rem 1.5rem;
+            font-size:0.85rem;
+            color:var(--muted);
+            border-bottom:1px solid var(--border);
         }
 
-        .nav-links a:hover {
-            color: var(--primary);
+        .sidebar-menu{
+            flex:1;
+            padding:1rem 0;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+        .sidebar-menu a{
+            display:flex;
+            align-items:center;
+            gap:0.5rem;
+            padding:0.75rem 1.5rem;
+            text-decoration:none;
+            color:var(--text);
+            font-weight:500;
+            transition:0.2s;
+            border-left:3px solid transparent;
         }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        .sidebar-menu a:hover{
+            background:#f8fafc;
+            color:var(--primary);
         }
 
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            display: inline-block;
-            text-decoration: none;
-            text-align: center;
+        .sidebar-menu a.active{
+            background:var(--primary-soft);
+            color:var(--primary);
+            border-left:3px solid var(--primary);
         }
 
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-success { background: var(--success); color: white; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
+        .sidebar-footer{
+            padding:1rem 1.5rem;
+            border-top:1px solid var(--border);
         }
 
-        th {
-            text-align: left;
-            padding: 0.75rem;
-            background: #334155;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
+        .logout{
+            display:block;
+            text-align:center;
+            padding:0.65rem;
+            border-radius:0.6rem;
+            text-decoration:none;
+            font-weight:600;
+            transition:0.2s;
         }
 
-        td {
-            padding: 0.75rem;
-            border-bottom: 1px solid #334155;
+        .logout.danger{
+            background:var(--danger);
+            color:white;
         }
 
-        tr:hover {
-            background: rgba(255,255,255,0.02);
+        .logout.primary{
+            background:var(--primary);
+            color:white;
         }
 
-        .form-group {
-            margin-bottom: 1rem;
+        .logout:hover{
+            opacity:0.9;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-muted);
+        /* MAIN */
+        .main{
+            margin-left:260px;
+            width:100%;
+            display:flex;
+            flex-direction:column;
         }
 
-        .form-control {
-            width: 100%;
-            padding: 0.625rem;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 0.5rem;
-            color: white;
-            outline: none;
+        .topbar{
+            background:white;
+            padding:1rem 1.5rem;
+            border-bottom:1px solid var(--border);
+            font-weight:700;
+            position:sticky;
+            top:0;
         }
 
-        .form-control:focus {
-            border-color: var(--primary);
+        .content{
+            padding:2rem;
         }
 
-        .badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
+        /* ALERT */
+        .alert{
+            padding:1rem;
+            border-radius:0.6rem;
+            margin-bottom:1rem;
         }
 
-        .alert {
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
+        .alert-success{
+            background:#dcfce7;
+            color:#166534;
         }
 
-        .alert-success { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.2); }
-        .alert-error { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .alert-error{
+            background:#fee2e2;
+            color:#991b1b;
+        }
+
+        /* RESPONSIVE */
+        @media(max-width:768px){
+            .sidebar{display:none;}
+            .main{margin-left:0;}
+        }
     </style>
 </head>
+
 <body>
-    <nav class="navbar">
-        <a href="/" class="navbar-brand">Sidojoyo</a>
-        <div class="nav-links">
-            @if(session('user_id'))
-                <span>👋 {{ session('name') }} ({{ ucfirst(session('role')) }})</span>
-                @if(session('role') == 'admin')
-                    <a href="/admin">Dashboard</a>
-                    <a href="/admin/products">Products</a>
-                    <a href="/reports/kasir-history">History Kasir</a>
-                    <a href="/reports/kasir-performance">Kinerja Kasir</a>
-                @elseif(session('role') == 'kasir')
-                    <a href="/kasir">POS</a>
-                @elseif(session('role') == 'owner')
-                    <a href="/owner">Dashboard</a>
-                    <a href="/admin/products">Products</a>
-                    <a href="/admin/users">Users</a>
-                    <a href="/reports/kasir-history">History Kasir</a>
-                    <a href="/reports/kasir-performance">Kinerja Kasir</a>
-                @endif
-                <a href="/logout" class="btn btn-danger">Logout</a>
-            @else
-                <a href="/login">Login</a>
-            @endif
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+            📦 Sidojoyo
         </div>
-    </nav>
 
-    <div class="container">
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-        @if(session('error'))
-            <div class="alert alert-error">{{ session('error') }}</div>
+        @if(session('user_id'))
+        <div class="sidebar-user">
+            👋 {{ session('name') }}<br>
+            <small>{{ ucfirst(session('role')) }}</small>
+        </div>
         @endif
 
-        @yield('content')
+        <div class="sidebar-menu">
+
+            @if(session('user_id'))
+
+                @if(session('role') == 'admin')
+                    <a href="/admin" class="{{ request()->is('admin') ? 'active' : '' }}">📊 Dashboard</a>
+                    <a href="/admin/products" class="{{ request()->is('admin/products*') ? 'active' : '' }}">📦 Products</a>
+                    <a href="/reports/kasir-history" class="{{ request()->is('reports/kasir-history') ? 'active' : '' }}">📜 History Kasir</a>
+                    <a href="/reports/kasir-performance" class="{{ request()->is('reports/kasir-performance') ? 'active' : '' }}">📈 Kinerja Kasir</a>
+
+                @elseif(session('role') == 'kasir')
+                    <a href="/kasir" class="{{ request()->is('kasir') ? 'active' : '' }}">🛒 POS</a>
+
+                @elseif(session('role') == 'owner')
+                    <a href="/owner" class="{{ request()->is('owner') ? 'active' : '' }}">📊 Dashboard</a>
+                    <a href="/admin/products">📦 Products</a>
+                    <a href="/admin/users">👤 Users</a>
+                    <a href="/reports/kasir-history">📜 History Kasir</a>
+                    <a href="/reports/kasir-performance">📈 Kinerja Kasir</a>
+                @endif
+
+            @endif
+
+        </div>
+
+<div class="sidebar-footer">
+    @if(session('user_id'))
+
+        <form method="POST" action="/logout" style="margin:0;">
+            @csrf
+            <button type="submit" class="logout danger" style="width:100%;border:none;cursor:pointer;">
+                Logout
+            </button>
+        </form>
+
+    @else
+
+        <a href="/login" class="logout primary">Login</a>
+
+    @endif
+</div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <div class="topbar">
+            {{ $title ?? 'Dashboard' }}
+        </div>
+
+        <div class="content">
+
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-error">{{ session('error') }}</div>
+            @endif
+
+            @yield('content')
+
+        </div>
+
     </div>
+
 </body>
 </html>

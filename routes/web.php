@@ -17,7 +17,7 @@ use App\Http\Controllers\ReportController;
 Route::get('/', fn () => view('welcome'));
 Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AdminAuthController::class, 'login']);
-Route::get('/logout', [AdminAuthController::class, 'logout']);
+Route::post('/logout', [AdminAuthController::class, 'logout']);
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +80,7 @@ Route::middleware('role:owner,admin')->group(function () {
 */
 Route::middleware('role:kasir')->group(function () {
     Route::get('/kasir', [kasirController::class, 'index']);
+    Route::get('/kasir/history', [kasirController::class, 'history']);
     Route::post('/kasir/cart/add/{id}', [kasirController::class, 'addToCart']);
     Route::post('/kasir/cart/min/{id}', [kasirController::class, 'decreaseQty']);
     Route::post('/kasir/cart/remove/{id}', [kasirController::class, 'removeItem']);
@@ -87,3 +88,7 @@ Route::middleware('role:kasir')->group(function () {
     Route::post('/kasir/checkout', [kasirController::class, 'checkout']);
 });
 
+//recipt
+
+Route::get('/transaction/{id}/receipt', [KasirController::class, 'receipt']);
+Route::post('/kasir/cart/set/{id}', [KasirController::class, 'setQty']);

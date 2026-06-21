@@ -1,110 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit User</title>
+@extends('layouts.app', ['title' => '✏️ Edit Pengguna'])
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
-        }
+@section('content')
 
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-        }
+<div class="card">
 
-        h1 {
-            margin-bottom: 20px;
-        }
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <div>
+            <h2 style="margin:0;">✏️ Edit Pengguna</h2>
+            <small style="color:var(--muted);">
+                Perbarui data pengguna sistem
+            </small>
+        </div>
 
-        form {
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-
-        label {
-            font-size: 0.9rem;
-            color: #94a3b8;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: #e2e8f0;
-            outline: none;
-        }
-
-        input:focus, select:focus {
-            border-color: #3b82f6;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-
-        .btn-update {
-            background: #22c55e;
-            color: white;
-        }
-
-        .btn-update:hover {
-            background: #16a34a;
-        }
-
-        .back {
-            display: inline-block;
-            margin-top: 15px;
-            color: #60a5fa;
-            text-decoration: none;
-        }
-
-        .back:hover {
-            text-decoration: underline;
-        }
-
-        .error-box {
-            background: #7f1d1d;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-        }
-
-        .error-box li {
-            color: #fecaca;
-        }
-
-        small {
-            color: #64748b;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-    <h1>✏️ Edit User</h1>
+        <a href="/admin/users" class="btn btn-secondary">
+            ← Kembali
+        </a>
+    </div>
 
     @if($errors->any())
-        <div class="error-box">
-            <ul>
+        <div class="alert alert-error">
+            <strong>Terjadi Kesalahan:</strong>
+
+            <ul style="margin-top:.5rem;padding-left:1rem;">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -116,28 +33,92 @@
         @csrf
         @method('PUT')
 
-        <label>Nama</label>
-        <input type="text" name="name" value="{{ $user->name }}">
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:1rem;
+        ">
 
-        <label>Username</label>
-        <input type="text" name="username" value="{{ $user->username }}">
+            <div>
+                <label style="display:block;margin-bottom:.5rem;font-weight:500;">
+                    Nama Lengkap
+                </label>
 
-        <label>Password (opsional)</label>
-        <input type="password" name="password">
-        <small>Kosongkan jika tidak ingin ganti password</small>
+                <input
+                    type="text"
+                    name="name"
+                    value="{{ old('name', $user->name) }}"
+                    class="form-control"
+                    placeholder="Masukkan nama lengkap">
+            </div>
 
-        <label>Role</label>
-        <select name="role">
-            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-            <option value="kasir" {{ $user->role == 'kasir' ? 'selected' : '' }}>Kasir</option>
-        </select>
+            <div>
+                <label style="display:block;margin-bottom:.5rem;font-weight:500;">
+                    Username
+                </label>
 
-        <button type="submit" class="btn-update">Update User</button>
+                <input
+                    type="text"
+                    name="username"
+                    value="{{ old('username', $user->username) }}"
+                    class="form-control"
+                    placeholder="Masukkan username">
+            </div>
+
+            <div>
+                <label style="display:block;margin-bottom:.5rem;font-weight:500;">
+                    Role
+                </label>
+
+                <select name="role" class="form-control">
+                    <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>
+                        👑 Admin
+                    </option>
+
+                    <option value="kasir" {{ $user->role == 'kasir' ? 'selected' : '' }}>
+                        🧾 Kasir
+                    </option>
+                </select>
+            </div>
+
+            <div style="grid-column:1/-1;">
+                <label style="display:block;margin-bottom:.5rem;font-weight:500;">
+                    Password Baru
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    class="form-control"
+                    placeholder="Kosongkan jika tidak ingin mengganti password">
+
+                <small style="color:var(--muted);">
+                    Kosongkan jika password tidak ingin diubah.
+                </small>
+            </div>
+
+        </div>
+
+        <div style="
+            display:flex;
+            gap:.75rem;
+            margin-top:1.5rem;
+            border-top:1px solid #e5e7eb;
+            padding-top:1rem;
+        ">
+
+            <button type="submit" class="btn btn-primary">
+                💾 Update Pengguna
+            </button>
+
+            <a href="/admin/users" class="btn btn-secondary">
+                Batal
+            </a>
+
+        </div>
+
     </form>
-
-    <a href="/admin/users" class="back">⬅ Kembali</a>
 
 </div>
 
-</body>
-</html>
+@endsection

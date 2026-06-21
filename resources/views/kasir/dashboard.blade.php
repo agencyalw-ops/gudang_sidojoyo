@@ -1,227 +1,313 @@
-@extends('layouts.app')
+@extends('layouts.kasir-layout', ['title' => 'POS Kasir - Checkout'])
 
 @section('content')
+
 <style>
+    .pos-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .search-box {
+        margin-bottom: 1rem;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        outline: none;
+        font-size: 14px;
+    }
+
     .pos-grid {
         display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 1.5rem;
+        grid-template-columns: 1fr 350px;
+        gap: 1rem;
+        align-items: start;
     }
 
     .product-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 1rem;
+        gap: 0.8rem;
     }
 
     .product-card {
-        background: #334155;
+        background: #fff;
+        border: 1px solid #e5e7eb;
         padding: 1rem;
-        border-radius: 0.5rem;
+        border-radius: 0.8rem;
+        font-size: 0.9rem;
+        transition: 0.2s ease;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        min-height: 140px;
+        cursor: pointer;
     }
+
+    .product-card:hover {
+        transform: scale(1.02);
+        border-color: #0f172a;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .product-card.disabled {
+        opacity: 0.4;
+        pointer-events: none;
+    }
+
+    .product-title { font-weight: bold; font-size: 1rem; }
+    .product-price { margin-top: 0.3rem; font-size: 0.9rem; }
+    .product-stock { font-size: 0.75rem; margin-top: 0.3rem; opacity: 0.7; }
 
     .cart-item {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #334155;
+        padding: 0.5rem;
+        border-bottom: 1px solid #eee;
+        font-size: 0.85rem;
     }
 
     .qty-btn {
-        background: #475569;
-        color: white;
+        padding: 0.3rem 0.6rem;
         border: none;
-        padding: 0.25rem 0.5rem;
+        background: #e5e7eb;
         border-radius: 0.25rem;
         cursor: pointer;
     }
 
-    .status-badge {
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        font-size: 0.75rem;
-        color: white;
-        font-weight: bold;
+    .total-section {
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        margin-top: 0.75rem;
     }
 
-    .success {
+    .btn-checkout {
+        width: 100%;
+        padding: 0.7rem;
+        margin-top: 0.5rem;
         background: #22c55e;
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
     }
 
-    .cancelled {
+    .btn-clear {
+        width: 100%;
+        padding: 0.6rem;
+        margin-top: 0.5rem;
         background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
     }
 </style>
+
+<div class="pos-header">
+    <h3 style="margin:0;">POS Kasir</h3>
+</div>
+
+{{-- SEARCH --}}
+<div class="search-box">
+    <input type="text" id="searchProduct" placeholder="Cari produk... 🔍">
+</div>
 
 <div class="pos-grid">
 
     {{-- PRODUCTS --}}
-    <div class="products-section">
-        <div class="card">
-            <h3 style="margin-top: 0;">📦 Daftar Produk</h3>
+    <div class="card">
+        <h3>Produk</h3>
 
-            <div class="product-grid">
-                @foreach($products as $p)
-                <div class="product-card">
-                    <div>
-                        <div style="font-weight: bold;">{{ $p->name }}</div>
-                        <div style="color: var(--success); font-size: 0.875rem;">
-                            Rp {{ number_format($p->price) }} /pcs
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">
-                            Pcs: {{ $p->stock }}
-                        </div>
+        <div class="product-grid">
+
+            @foreach($products as $p)
+
+            <form method="POST" action="/kasir/cart/add/{{ $p->id }}">
+                @csrf
+
+                <div class="product-card {{ $p->stock <= 0 ? 'disabled' : '' }}"
+                     onclick="if(!this.classList.contains('disabled')) this.closest('form').submit()">
+
+                    <div class="product-title">{{ $p->name }}</div>
+
+                    <div class="product-price">
+                        Rp {{ number_format($p->price) }}
                     </div>
 
-                    <form method="POST" action="/kasir/cart/add/{{ $p->id }}" style="margin-top: 0.75rem;">
-                        @csrf
-                        <button class="btn btn-primary" style="width: 100%; font-size: 0.75rem;">
-                            Tambah
-                        </button>
-                    </form>
+                    <div class="product-stock">
+                        {{ $p->stock > 0 ? $p->stock.' pcs' : 'Habis' }}
+                    </div>
+
+                    <button type="submit"
+                        onclick="event.stopPropagation()"
+                        style="
+                            margin-top:10px;
+                            width:100%;
+                            padding:8px;
+                            border:none;
+                            border-radius:8px;
+                            background:#0f172a;
+                            color:white;
+                            font-size:12px;
+                            font-weight:600;
+                        ">
+                        + Tambah
+                    </button>
+
                 </div>
-                @endforeach
-            </div>
+
+            </form>
+
+            @endforeach
+
         </div>
     </div>
 
     {{-- CART --}}
-    <div class="cart-section">
-        <div class="card">
-            <h3 style="margin-top: 0;">🛒 Keranjang</h3>
+    <div class="card">
+        <h3>Keranjang</h3>
 
-            @php $total = 0; @endphp
+        @php $total = 0; @endphp
 
-            <div style="max-height: 400px; overflow-y: auto;">
-                @forelse($cart as $id => $c)
+        @forelse($cart as $id => $c)
+            @php $subtotal = $c['price'] * $c['qty']; $total += $subtotal; @endphp
 
-                    @php $total += $c['price'] * $c['qty']; @endphp
+            <div class="cart-item"
+                 data-id="{{ $id }}"
+                 data-price="{{ $c['price'] }}">
 
-                    <div class="cart-item">
-                        <div>
-                            <div style="font-weight: 500;">{{ $c['name'] }}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted);">
-                                Rp {{ number_format($c['price']) }} /pcs
-                            </div>
-                        </div>
-
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <form method="POST" action="/kasir/cart/min/{{ $id }}">
-                                @csrf
-                                <button class="qty-btn">-</button>
-                            </form>
-
-                            <span>{{ $c['qty'] }}</span>
-
-                            <form method="POST" action="/kasir/cart/add/{{ $id }}">
-                                @csrf
-                                <button class="qty-btn">+</button>
-                            </form>
-                        </div>
-                    </div>
-
-                @empty
-                    <p style="text-align:center;color:var(--text-muted);">
-                        Keranjang kosong
-                    </p>
-                @endforelse
-            </div>
-
-            @if($total > 0)
-            <div style="margin-top: 1.5rem; border-top: 2px solid #334155; padding-top: 1rem;">
-
-                <div style="display:flex;justify-content:space-between;font-size:1.25rem;font-weight:bold;margin-bottom:1rem;">
-                    <span>Total:</span>
-                    <span style="color:var(--success);">
-                        Rp {{ number_format($total) }}
-                    </span>
+                <div>
+                    <b>{{ $c['name'] }}</b><br>
+                    <small>Rp {{ number_format($c['price']) }}</small>
                 </div>
 
-                <form method="POST" action="/kasir/checkout">
-                    @csrf
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
 
-<div class="form-group">
-	                        <label>Bayar (Tunai)</label>
-	                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-	                            <span style="color: var(--text-muted);">Rp</span>
-	                            <input type="number" name="money" class="form-control" placeholder="Jumlah uang" required style="flex: 1;">
-	                        </div>
-	                    </div>
+                    <div style="display:flex;gap:5px;align-items:center;">
 
-                    <button class="btn btn-success" style="width:100%;margin-bottom:0.5rem;">
-                        Proses Checkout
-                    </button>
-                </form>
+                        {{-- MIN --}}
+                        <form method="POST" action="/kasir/cart/min/{{ $id }}">
+                            @csrf
+                            <button class="qty-btn">-</button>
+                        </form>
 
-                <form method="POST" action="/kasir/cart/clear">
-                    @csrf
-                    <button class="btn btn-danger" style="width:100%;font-size:0.75rem;">
-                        Kosongkan Keranjang
-                    </button>
-                </form>
+                        {{-- QTY INPUT --}}
+                        <input type="number"
+                               value="{{ $c['qty'] }}"
+                               min="1"
+                               class="qty-input"
+                               onchange="updateQty(this, {{ $id }})"
+                               style="
+                                    width:60px;
+                                    padding:3px;
+                                    border:1px solid #ccc;
+                                    border-radius:6px;
+                                    text-align:center;
+                               ">
+
+                        {{-- PLUS --}}
+                        <form method="POST" action="/kasir/cart/add/{{ $id }}">
+                            @csrf
+                            <button class="qty-btn">+</button>
+                        </form>
+
+                    </div>
+
+                    <small class="subtotal-text" style="opacity:0.7;">
+                        Subtotal: Rp {{ number_format($subtotal) }}
+                    </small>
+
+                </div>
 
             </div>
-            @endif
+
+        @empty
+            <p style="color:#666;">Keranjang kosong</p>
+        @endforelse
+
+        {{-- TOTAL --}}
+        <div class="total-section">
+            <div style="display:flex;justify-content:space-between;">
+                <span>Total</span>
+                <b id="grandTotal">Rp {{ number_format($total) }}</b>
+            </div>
+
+            <form method="POST" action="/kasir/checkout">
+                @csrf
+                <input type="number"
+                       name="money"
+                       placeholder="Bayar"
+                       required
+                       style="width:100%;padding:0.6rem;margin-top:0.5rem;border:1px solid #ccc;border-radius:0.5rem;">
+
+                <button class="btn-checkout">Checkout</button>
+            </form>
+
+            <form method="POST" action="/kasir/cart/clear">
+                @csrf
+                <button class="btn-clear">Clear</button>
+            </form>
         </div>
     </div>
+
 </div>
 
-{{-- TRANSAKSI TERAKHIR --}}
-<div class="card" style="margin-top: 1.5rem;">
-    <h3>🕒 Transaksi Terakhir</h3>
+{{-- SCRIPT --}}
+<script>
+document.getElementById('searchProduct').addEventListener('keyup', function () {
+    let keyword = this.value.toLowerCase();
+    let products = document.querySelectorAll('.product-card');
 
-    <div style="overflow-x:auto;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Invoice</th>
-                    <th>Total</th>
-                    <th>Bayar</th>
-                    <th>Kembali</th>
-                    <th>Status</th>
-                    <th>Waktu</th>
-                </tr>
-            </thead>
+    products.forEach(card => {
+        let name = card.innerText.toLowerCase();
+        card.style.display = name.includes(keyword) ? 'flex' : 'none';
+    });
+});
 
-            <tbody>
-                @forelse($transactions as $t)
-                <tr>
-                    <td>{{ $t->invoice }}</td>
+function updateQty(input, id) {
+    let cartItem = input.closest('.cart-item');
+    let price = parseInt(cartItem.dataset.price);
+    let qty = parseInt(input.value);
 
-                    <td style="color:var(--success);font-weight:bold;">
-                        Rp {{ number_format($t->total) }}
-                    </td>
+    if (qty < 1 || isNaN(qty)) {
+        qty = 1;
+        input.value = 1;
+    }
 
-                    <td>Rp {{ number_format($t->money) }}</td>
+    let subtotal = price * qty;
 
-                    <td>Rp {{ number_format($t->change_money) }}</td>
+    cartItem.querySelector('.subtotal-text').innerText =
+        "Subtotal: Rp " + subtotal.toLocaleString('id-ID');
 
-                    {{-- STATUS ONLY 2 STATE --}}
-                    <td>
-                        @if($t->status === 'cancelled')
-                            <span class="status-badge cancelled">Cancelled</span>
-                        @else
-                            <span class="status-badge success">Success</span>
-                        @endif
-                    </td>
+    let total = 0;
 
-                    <td style="font-size:0.875rem;color:var(--text-muted);">
-                        {{ \Carbon\Carbon::parse($t->created_at)->format('d/m/Y H:i') }}
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" style="text-align:center;color:var(--text-muted);">
-                        Belum ada transaksi
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
+    document.querySelectorAll('.cart-item').forEach(item => {
+        let p = parseInt(item.dataset.price);
+        let q = item.querySelector('.qty-input').value;
+        total += p * q;
+    });
+
+    document.getElementById('grandTotal').innerText =
+        "Rp " + total.toLocaleString('id-ID');
+
+    fetch(`/kasir/cart/set/${id}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        },
+        body: JSON.stringify({ qty: qty })
+    });
+}
+</script>
+
 @endsection

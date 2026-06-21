@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\ProductStockHistory;
-use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::latest()->get();
+        $products = Product::whereNull('deleted_at')
+            ->where('is_active', 1)
+            ->latest()
+            ->get();
+
         return view('admin.products.index', compact('products'));
     }
 
@@ -33,10 +36,10 @@ class ProductController extends Controller
             'name' => $request->name,
             'sku' => $request->sku,
             'price' => $request->price,
-            'stock' => $request->stock, // sudah dianggap pcs
+            'stock' => $request->stock,
+            'is_active' => 1
         ]);
 
-        // Track stock history - pcs masuk
         ProductStockHistory::create([
             'product_id' => $product->id,
             'type' => 'in',
@@ -66,18 +69,15 @@ class ProductController extends Controller
         ]);
 
         $product = Product::findOrFail($id);
+
         $oldStock = $product->stock;
-        $newStock = (int)$request->stock;
+        $newStock = (int) $request->stock;
 
-        // Track stock history if stock changes
         if ($oldStock != $newStock) {
-            $type = $newStock > $oldStock ? 'in' : 'out';
-            $qty = abs($newStock - $oldStock);
-
             ProductStockHistory::create([
                 'product_id' => $product->id,
-                'type' => $type,
-                'qty' => $qty,
+                'type' => $newStock > $oldStock ? 'in' : 'out',
+                'qty' => abs($newStock - $oldStock),
                 'before_stock' => $oldStock,
                 'after_stock' => $newStock,
                 'note' => 'Manual adjustment',
@@ -89,7 +89,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'sku' => $request->sku,
             'price' => $request->price,
-            'stock' => $newStock, // tetap pcs
+            'stock' => $newStock,
             'description' => $request->description,
             'is_active' => $request->has('is_active'),
         ]);
@@ -100,18 +100,21 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
-        $product->delete();
+
+        $product->update([
+            'is_active' => 0
+        ]);
+
+        $product->delete(); // soft delete
 
         return redirect('/admin/products')->with('success', 'Product berhasil dihapus');
     }
 
-    /**
-     * Show stock history for all products
-     */
     public function stockHistory(Request $request)
     {
-        $query = ProductStockHistory::with('product')
-            ->orderBy('created_at', 'desc');
+        $query = ProductStockHistory::with(['product' => function ($q) {
+            $q->withTrashed();
+        }])->orderBy('created_at', 'desc');
 
         if ($request->filled('product_id')) {
             $query->where('product_id', $request->product_id);
@@ -122,17 +125,15 @@ class ProductController extends Controller
         }
 
         $histories = $query->paginate(50);
-        $products = Product::get();
+        $products = Product::withTrashed()->get();
 
         return view('admin.products.stock-history', compact('histories', 'products'));
     }
 
-    /**
-     * Show stock history for specific product
-     */
     public function productStockHistory($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::withTrashed()->findOrFail($id);
+
         $histories = ProductStockHistory::where('product_id', $id)
             ->orderBy('created_at', 'desc')
             ->paginate(50);
