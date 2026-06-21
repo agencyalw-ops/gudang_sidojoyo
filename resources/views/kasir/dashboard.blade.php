@@ -144,10 +144,13 @@
                 <form method="POST" action="/kasir/checkout">
                     @csrf
 
-                    <div class="form-group">
-                        <label>Bayar (Tunai)</label>
-                        <input type="number" name="money" class="form-control" placeholder="Jumlah uang" required>
-                    </div>
+<div class="form-group">
+	                        <label>Bayar (Tunai)</label>
+	                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+	                            <span style="color: var(--text-muted);">Rp</span>
+	                            <input type="number" name="money" class="form-control" placeholder="Jumlah uang" required style="flex: 1;">
+	                        </div>
+	                    </div>
 
                     <button class="btn btn-success" style="width:100%;margin-bottom:0.5rem;">
                         Proses Checkout

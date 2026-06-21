@@ -129,8 +129,11 @@
             </div>
 
             <div class="form-group">
-                <label>Harga</label>
-                <input type="number" name="price" class="form-control" value="{{ $product->price }}">
+                <label>Harga (Rp)</label>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="color: var(--text-muted);">Rp</span>
+                    <input type="number" name="price" class="form-control" value="{{ $product->price }}" style="flex: 1;">
+                </div>
             </div>
 
             <div class="form-group">
