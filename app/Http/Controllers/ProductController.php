@@ -27,47 +27,50 @@ class ProductController extends Controller
             'stock' => 'required|integer',
         ]);
 
-        $data = $request->all();
-31	        $data['unit'] = 'pcs';
-32	        Product::create($data);
+        Product::create([
+            'name' => $request->name,
+            'sku' => $request->sku,
+            'price' => $request->price,
+            'stock' => $request->stock, // sudah dianggap pcs
+        ]);
 
         return redirect('/admin/products')->with('success', 'Product berhasil ditambahkan');
     }
-        public function edit($id)
-{
-    $product = Product::findOrFail($id);
-    return view('admin.products.edit', compact('product'));
-}
 
-public function update(Request $request, $id)
-{
-    $request->validate([
-        'name' => 'required',
-        'sku' => 'required',
-        'price' => 'required|numeric',
-        'stock' => 'required|integer',
-    ]);
+    public function edit($id)
+    {
+        $product = Product::findOrFail($id);
+        return view('admin.products.edit', compact('product'));
+    }
 
-    $product = Product::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required',
+            'sku' => 'required',
+            'price' => 'required|numeric',
+            'stock' => 'required|integer',
+        ]);
 
-    $product->update([
-        'name' => $request->name,
-        'sku' => $request->sku,
-        'price' => $request->price,
-        'stock' => $request->stock,
-        'unit' => 'pcs',
-        'description' => $request->description,
-        'is_active' => $request->has('is_active'),
-    ]);
+        $product = Product::findOrFail($id);
 
-    return redirect('/admin/products')->with('success', 'Product berhasil diupdate');
-}
-public function destroy($id)
-{
-    $product = Product::findOrFail($id);
-    $product->delete();
+        $product->update([
+            'name' => $request->name,
+            'sku' => $request->sku,
+            'price' => $request->price,
+            'stock' => $request->stock, // tetap pcs
+            'description' => $request->description,
+            'is_active' => $request->has('is_active'),
+        ]);
 
-    return redirect('/admin/products')->with('success', 'Product berhasil dihapus');
-}
-    
+        return redirect('/admin/products')->with('success', 'Product berhasil diupdate');
+    }
+
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->delete();
+
+        return redirect('/admin/products')->with('success', 'Product berhasil dihapus');
+    }
 }

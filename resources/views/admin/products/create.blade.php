@@ -111,11 +111,6 @@
             </div>
 
             <div class="form-group">
-                <label>Satuan</label>
-115	                <input type="text" name="unit" class="form-control" value="pcs" readonly>
-            </div>
-
-            <div class="form-group">
                 <label>Harga per Pcs (Rp)</label>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <span style="color: var(--text-muted);">Rp</span>

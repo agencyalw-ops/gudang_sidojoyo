@@ -14,7 +14,6 @@ return new class extends Migration
             $table->string('sku')->unique();
             $table->decimal('price', 12, 2)->default(0);
             $table->integer('stock')->default(0);
-            $table->string('unit')->nullable();
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
