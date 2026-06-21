@@ -95,7 +95,7 @@
 
                             <form method="POST"
                                   action="{{ route('transaction.cancel', $t->id) }}"
-                                  onsubmit="return confirm('Cancel transaksi ini? Stok akan dikembalikan.')">
+                                  onsubmit="return confirm('Cancel transaksi ini? Pcs akan dikembalikan.')">
 
                                 @csrf
 

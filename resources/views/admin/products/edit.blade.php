@@ -125,11 +125,11 @@
 
             <div class="form-group">
                 <label>Satuan</label>
-                <input type="text" name="unit" class="form-control" value="{{ $product->unit }}">
+128	                <input type="text" name="unit" class="form-control" value="pcs" readonly>
             </div>
 
             <div class="form-group">
-                <label>Harga (Rp)</label>
+                <label>Harga per Pcs (Rp)</label>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <span style="color: var(--text-muted);">Rp</span>
                     <input type="number" name="price" class="form-control" value="{{ $product->price }}" style="flex: 1;">
@@ -137,7 +137,7 @@
             </div>
 
             <div class="form-group">
-                <label>Stok</label>
+                <label>Stok (Pcs)</label>
                 <input type="number" name="stock" class="form-control" value="{{ $product->stock }}">
             </div>
 

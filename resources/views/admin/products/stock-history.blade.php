@@ -4,7 +4,7 @@
 <div class="card">
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-        <h2 style="margin:0;">📜 History Stock Produk</h2>
+        <h2 style="margin:0;">📜 History Pcs Produk</h2>
 
         <a href="/admin/products" class="btn btn-primary">
             📦 Daftar Produk
@@ -19,8 +19,8 @@
                     <th>Produk</th>
                     <th>Tipe</th>
                     <th>Qty</th>
-                    <th>Stock Awal</th>
-                    <th>Stock Akhir</th>
+                    <th>Pcs Awal</th>
+                    <th>Pcs Akhir</th>
                     <th>User</th>
                     <th>Keterangan</th>
                 </tr>
@@ -34,9 +34,9 @@
 
                     <td>
                         @if($h->type == 'in')
-                            <span style="color:#22c55e;">Stock Masuk</span>
+                            <span style="color:#22c55e;">Pcs Masuk</span>
                         @elseif($h->type == 'out')
-                            <span style="color:#ef4444;">Stock Keluar</span>
+                            <span style="color:#ef4444;">Pcs Keluar</span>
                         @else
                             <span style="color:#f59e0b;">Adjustment</span>
                         @endif
@@ -51,7 +51,7 @@
                 @empty
                 <tr>
                     <td colspan="8" style="text-align:center;">
-                        Belum ada history stock
+                        Belum ada history pcs
                     </td>
                 </tr>
                 @endforelse

@@ -14,7 +14,7 @@
                     <th>Nama</th>
                     <th>SKU</th>
                     <th>Harga</th>
-                    <th>Stok</th>
+                    <th>Pcs</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -23,7 +23,7 @@
                 <tr>
                     <td style="font-weight: 500;">{{ $p->name }}</td>
                     <td><span class="badge" style="background: #334155;">{{ $p->sku }}</span></td>
-                    <td style="color: var(--success); font-weight: bold;">Rp {{ number_format($p->price) }}</td>
+                    <td style="color: var(--success); font-weight: bold;">Rp {{ number_format($p->price) }} /pcs</td>
                     <td>{{ $p->stock }}</td>
                     <td>
                         <div style="display: flex; gap: 0.5rem;">

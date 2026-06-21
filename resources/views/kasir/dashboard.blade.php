@@ -70,10 +70,10 @@
                     <div>
                         <div style="font-weight: bold;">{{ $p->name }}</div>
                         <div style="color: var(--success); font-size: 0.875rem;">
-                            Rp {{ number_format($p->price) }}
+                            Rp {{ number_format($p->price) }} /pcs
                         </div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">
-                            Stok: {{ $p->stock }}
+                            Pcs: {{ $p->stock }}
                         </div>
                     </div>
 
@@ -105,7 +105,7 @@
                         <div>
                             <div style="font-weight: 500;">{{ $c['name'] }}</div>
                             <div style="font-size: 0.75rem; color: var(--text-muted);">
-                                Rp {{ number_format($c['price']) }}
+                                Rp {{ number_format($c['price']) }} /pcs
                             </div>
                         </div>
 

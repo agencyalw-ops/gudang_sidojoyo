@@ -60,7 +60,7 @@ class AdminController extends Controller
 
             DB::commit();
 
-            return back()->with('success', 'Transaksi dihapus dan stok dikembalikan');
+            return back()->with('success', 'Transaksi dihapus dan pcs dikembalikan');
 
         } catch (\Exception $e) {
             DB::rollBack();

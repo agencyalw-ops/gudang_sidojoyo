@@ -27,7 +27,9 @@ class ProductController extends Controller
             'stock' => 'required|integer',
         ]);
 
-        Product::create($request->all());
+        $data = $request->all();
+31	        $data['unit'] = 'pcs';
+32	        Product::create($data);
 
         return redirect('/admin/products')->with('success', 'Product berhasil ditambahkan');
     }
@@ -53,7 +55,7 @@ public function update(Request $request, $id)
         'sku' => $request->sku,
         'price' => $request->price,
         'stock' => $request->stock,
-        'unit' => $request->unit,
+        'unit' => 'pcs',
         'description' => $request->description,
         'is_active' => $request->has('is_active'),
     ]);

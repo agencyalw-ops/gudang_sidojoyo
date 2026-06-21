@@ -112,11 +112,11 @@
 
             <div class="form-group">
                 <label>Satuan</label>
-                <input type="text" name="unit" class="form-control" placeholder="pcs / box / kg">
+115	                <input type="text" name="unit" class="form-control" value="pcs" readonly>
             </div>
 
             <div class="form-group">
-                <label>Harga (Rp)</label>
+                <label>Harga per Pcs (Rp)</label>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <span style="color: var(--text-muted);">Rp</span>
                     <input type="number" name="price" class="form-control" placeholder="Harga" style="flex: 1;">
@@ -124,7 +124,7 @@
             </div>
 
             <div class="form-group">
-                <label>Stock</label>
+                <label>Stock (Pcs)</label>
                 <input type="number" name="stock" class="form-control" placeholder="Stock">
             </div>
 
