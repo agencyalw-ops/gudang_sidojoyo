@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\ProductStockHistory;
 
 class KasirController extends Controller
 {
@@ -136,9 +137,26 @@ class KasirController extends Controller
                     'subtotal' => (int)$item['price'] * (int)$item['qty']
                 ]);
 
+                // Get before stock
+                $product = DB::table('products')->where('id', $productId)->first();
+                $beforeStock = (int)$product->stock;
+                $afterStock = $beforeStock - (int)$item['qty'];
+
+                // Decrement stock
                 DB::table('products')
                     ->where('id', $productId)
                     ->decrement('stock', $item['qty']);
+
+                // Track stock history - pcs terjual/keluar
+                ProductStockHistory::create([
+                    'product_id' => $productId,
+                    'type' => 'out',
+                    'qty' => (int)$item['qty'],
+                    'before_stock' => $beforeStock,
+                    'after_stock' => $afterStock,
+                    'note' => 'Sold - Invoice: ' . $invoice,
+                    'user_name' => session('name') ?? 'Kasir'
+                ]);
             }
 
             DB::commit();

@@ -59,6 +59,10 @@ Route::middleware('role:owner,admin')->group(function () {
     Route::put('/admin/products/{id}', [ProductController::class, 'update']);
     Route::delete('/admin/products/{id}', [ProductController::class, 'destroy']);
     
+    // Stock History
+    Route::get('/admin/products/stock/history', [ProductController::class, 'stockHistory']);
+    Route::get('/admin/products/{id}/stock-history', [ProductController::class, 'productStockHistory']);
+    
     // Transaction Management (Delete)
     Route::post('/transaction/{id}/cancel', [ReportController::class, 'cancelTransaction']);
     Route::post('/transaction/{id}/cancel', [ReportController::class, 'cancelTransaction'])

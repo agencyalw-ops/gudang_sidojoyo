@@ -4,7 +4,10 @@
 <div class="card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <h2 style="margin: 0;">📦 Kelola Produk</h2>
-        <a href="/admin/products/create" class="btn btn-primary">+ Tambah Produk</a>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="/admin/products/create" class="btn btn-primary">+ Tambah Produk</a>
+            <a href="/admin/products/stock/history" class="btn btn-secondary">📜 Lihat Semua History</a>
+        </div>
     </div>
 
     <div style="overflow-x: auto;">
@@ -28,6 +31,7 @@
                     <td>
                         <div style="display: flex; gap: 0.5rem;">
                             <a href="/admin/products/{{ $p->id }}/edit" class="btn btn-primary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</a>
+                            <a href="/admin/products/{{ $p->id }}/stock-history" class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; text-decoration: none;">History</a>
                             <form method="POST" action="/admin/products/{{ $p->id }}" onsubmit="return confirm('Hapus produk ini?')">
                                 @csrf
                                 @method('DELETE')

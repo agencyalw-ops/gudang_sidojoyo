@@ -4,45 +4,50 @@
 <div class="card">
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-        <h2 style="margin:0;">📜 History Stok Semua Produk</h2>
+        <div>
+            <h2 style="margin:0;">📦 {{ $product->name }}</h2>
+            <small style="color: var(--text-muted);">SKU: {{ $product->sku }} | Stock Saat Ini: {{ $product->stock }} pcs</small>
+        </div>
 
         <a href="/admin/products" class="btn btn-primary">
-            📦 Daftar Produk
+            ← Kembali
         </a>
     </div>
 
-    <div class="card" style="margin-bottom: 1.5rem;">
-        <h4 style="margin-top: 0; margin-bottom: 1rem;">Filter</h4>
-        <form method="GET" action="/admin/products/stock/history" 
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: flex-end;">
-            
-            <div class="form-group" style="margin-bottom: 0;">
-                <label>Produk</label>
-                <select name="product_id" class="form-control">
-                    <option value="">-- Semua Produk --</option>
-                    @foreach($products as $product)
-                        <option value="{{ $product->id }}" @if(request('product_id') == $product->id) selected @endif>
-                            {{ $product->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        @php
+            $totalIn = collect($histories)->where('type', 'in')->sum('qty');
+            $totalOut = collect($histories)->where('type', 'out')->sum('qty');
+            $totalAdjust = collect($histories)->where('type', 'adjust')->sum('qty');
+        @endphp
 
-            <div class="form-group" style="margin-bottom: 0;">
-                <label>Tipe</label>
-                <select name="type" class="form-control">
-                    <option value="">-- Semua Tipe --</option>
-                    <option value="in" @if(request('type') == 'in') selected @endif>Masuk (In)</option>
-                    <option value="out" @if(request('type') == 'out') selected @endif>Terjual/Keluar (Out)</option>
-                    <option value="adjust" @if(request('type') == 'adjust') selected @endif>Adjustment</option>
-                </select>
+        <div class="card" style="margin-bottom: 0;">
+            <div style="color: var(--text-muted); font-size: 0.875rem;">Total Masuk</div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #22c55e;">
+                {{ $totalIn }} pcs
             </div>
+        </div>
 
-            <div style="display: flex; gap: 0.5rem;">
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a href="/admin/products/stock/history" class="btn btn-secondary" style="text-decoration: none;">Reset</a>
+        <div class="card" style="margin-bottom: 0;">
+            <div style="color: var(--text-muted); font-size: 0.875rem;">Total Terjual</div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #ef4444;">
+                {{ $totalOut }} pcs
             </div>
-        </form>
+        </div>
+
+        <div class="card" style="margin-bottom: 0;">
+            <div style="color: var(--text-muted); font-size: 0.875rem;">Total Adjustment</div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b;">
+                {{ $totalAdjust }} pcs
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 0;">
+            <div style="color: var(--text-muted); font-size: 0.875rem;">Stock Sisa</div>
+            <div style="font-size: 1.5rem; font-weight: bold;">
+                {{ $product->stock }} pcs
+            </div>
+        </div>
     </div>
 
     <div style="overflow-x:auto;">
@@ -50,7 +55,6 @@
             <thead>
                 <tr>
                     <th>Waktu</th>
-                    <th>Produk</th>
                     <th>Tipe</th>
                     <th>Qty</th>
                     <th>Stock Awal</th>
@@ -65,11 +69,6 @@
                 <tr>
                     <td style="font-size: 0.875rem; color: var(--text-muted);">
                         {{ $h->created_at->format('d/m/Y H:i:s') }}
-                    </td>
-                    <td>
-                        <a href="/admin/products/{{ $h->product->id }}/stock-history" style="text-decoration: none; color: var(--primary);">
-                            {{ $h->product->name }}
-                        </a>
                     </td>
 
                     <td>
@@ -96,8 +95,8 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" style="text-align:center; color: var(--text-muted); padding: 2rem;">
-                        📭 Belum ada history stok
+                    <td colspan="7" style="text-align:center; color: var(--text-muted); padding: 2rem;">
+                        📭 Belum ada history untuk produk ini
                     </td>
                 </tr>
                 @endforelse

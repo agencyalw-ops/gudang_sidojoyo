@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\ProductStockHistory;
 
 class ReportController extends Controller
 {
@@ -223,9 +224,25 @@ class ReportController extends Controller
                 ->get();
 
             foreach ($items as $item) {
+                // Get before stock
+                $product = DB::table('products')->where('id', $item->product_id)->first();
+                $beforeStock = (int)$product->stock;
+                $afterStock = $beforeStock + (int)$item->qty;
+
                 DB::table('products')
                     ->where('id', $item->product_id)
                     ->increment('stock', (int) $item->qty);
+
+                // Track stock history - pcs dikembalikan
+                ProductStockHistory::create([
+                    'product_id' => $item->product_id,
+                    'type' => 'in',
+                    'qty' => (int)$item->qty,
+                    'before_stock' => $beforeStock,
+                    'after_stock' => $afterStock,
+                    'note' => 'Stock returned - Cancelled invoice: ' . $transaction->invoice,
+                    'user_name' => session('name') ?? 'Admin'
+                ]);
             }
 
             DB::table('transactions')
