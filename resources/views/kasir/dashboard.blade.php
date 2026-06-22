@@ -129,6 +129,34 @@
         }
     }
 
+    @media(max-width:320px){
+        .product-grid{
+            grid-template-columns: 1fr;
+        }
+        .product-card{
+            min-height: auto;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .product-card button{
+            width: auto !important;
+            margin-top: 0 !important;
+            padding: 5px 10px !important;
+        }
+        .cart-item{
+            flex-direction: column;
+            gap: 8px;
+        }
+        .cart-item > div:last-child{
+            align-items: flex-start !important;
+        }
+        .qty-input{
+            width: 50px !important;
+        }
+    }
+
     .product-card {
         background: #fff;
         border: 1px solid #e5e7eb;

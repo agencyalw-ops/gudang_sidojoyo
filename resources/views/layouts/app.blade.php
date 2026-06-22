@@ -251,6 +251,35 @@
                 font-size:0.65rem;
             }
         }
+
+        @media(max-width:320px){
+            .sidebar{
+                width:240px;
+                left:-240px;
+            }
+            .topbar{
+                padding:0.5rem;
+                font-size:0.85rem;
+                gap:0.5rem;
+            }
+            .content{
+                padding:0.5rem;
+            }
+            .sidebar-header{
+                padding:1rem;
+                font-size:1.1rem;
+            }
+            .sidebar-menu a{
+                padding:0.6rem 1rem;
+                font-size:0.9rem;
+            }
+            table{
+                font-size:0.65rem;
+            }
+            th, td{
+                padding:0.3rem;
+            }
+        }
     </style>
 </head>
 

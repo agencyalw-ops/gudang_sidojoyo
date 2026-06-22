@@ -178,6 +178,21 @@
                 width: 200px;
             }
         }
+
+        @media(max-width:320px){
+            .kasir-topbar{
+                padding: 0.5rem;
+            }
+            .kasir-brand strong{
+                font-size: 0.8rem;
+            }
+            .kasir-content{
+                padding: 0.5rem;
+            }
+            .sidebar{
+                width: 180px;
+            }
+        }
     </style>
 </head>
 

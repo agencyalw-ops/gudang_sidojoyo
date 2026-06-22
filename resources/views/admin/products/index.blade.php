@@ -195,6 +195,24 @@
         }
     }
 
+    @media(max-width:320px){
+        .header h2{
+            font-size:0.9rem;
+        }
+        table{
+            font-size:0.6rem;
+        }
+        th, td{
+            padding:0.25rem;
+        }
+        .price{
+            font-size:0.65rem;
+        }
+        .action-group{
+            gap: 0.2rem;
+        }
+    }
+
 </style>
 
 <div class="card">

@@ -237,6 +237,22 @@
             font-size:0.65rem;
         }
     }
+
+    @media(max-width:320px){
+        .stats-grid{
+            grid-template-columns: 1fr;
+        }
+        .page-header .btn{
+            width: 100%;
+            text-align: center;
+        }
+        table{
+            font-size:0.65rem;
+        }
+        th, td{
+            padding:0.3rem;
+        }
+    }
 </style>
 
 <div class="page-header">
