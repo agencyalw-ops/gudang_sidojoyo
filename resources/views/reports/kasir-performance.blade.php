@@ -1,6 +1,22 @@
 @extends('layouts.app', ['title' => '📈 Kinerja Kasir Bulanan'])
 
 @section('content')
+<style>
+    @media(max-width:768px){
+        h2{ font-size: 1.25rem; }
+        .card{ padding: 1rem; }
+        .card div[style*="font-size: 2rem"]{ font-size: 1.5rem !important; }
+        form{ grid-template-columns: 1fr !important; }
+        table{ font-size: 0.8rem; }
+        th, td{ padding: 0.6rem; }
+    }
+    @media(max-width:480px){
+        h2{ font-size: 1.1rem; }
+        .card div[style*="font-size: 2rem"]{ font-size: 1.25rem !important; }
+        table{ font-size: 0.7rem; }
+        th, td{ padding: 0.4rem; }
+    }
+</style>
 <div style="margin-bottom: 2rem;">
     <h2 style="margin-top: 0;">📈 Laporan Kinerja Kasir Bulanan</h2>
 

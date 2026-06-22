@@ -96,6 +96,58 @@
         margin-bottom: 1rem;
         font-size: 14px;
     }
+    
+    /* RESPONSIVE */
+    @media(max-width:480px){
+        .login-wrapper{
+            padding: 15px;
+        }
+        
+        .login-card{
+            max-width: 100%;
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+        
+        .login-header{
+            margin-bottom: 1.5rem;
+        }
+        
+        .login-header .icon{
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+        
+        .login-header h2{
+            font-size: 1.3rem;
+        }
+        
+        .login-header p{
+            font-size: 0.85rem;
+        }
+        
+        .form-group label{
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        
+        .form-control{
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 6px;
+        }
+        
+        .btn{
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 6px;
+        }
+        
+        .alert-error{
+            padding: 10px;
+            font-size: 13px;
+        }
+    }
 </style>
 
 <div class="login-wrapper">
@@ -147,4 +199,14 @@
 
 </div>
 
+@endsection
+
+@section('extra_styles')
+<style>
+    @media(max-width:768px){
+        .login-card{
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+    }
+</style>
 @endsection

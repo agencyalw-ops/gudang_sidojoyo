@@ -103,6 +103,78 @@
         color:#64748b;
         font-size:0.85rem;
     }
+    
+    /* RESPONSIVE */
+    @media(max-width:768px){
+        .history-header{
+            flex-direction:column;
+            align-items:flex-start;
+            gap:0.75rem;
+        }
+        
+        .history-header h2{
+            font-size:1.1rem;
+        }
+        
+        table{
+            font-size:0.8rem;
+        }
+        
+        th, td{
+            padding:0.6rem;
+        }
+        
+        .badge{
+            padding:0.2rem 0.5rem;
+            font-size:0.65rem;
+        }
+        
+        .item-box{
+            font-size:0.75rem;
+        }
+        
+        .btn-danger{
+            padding:0.3rem 0.5rem;
+            font-size:0.7rem;
+        }
+    }
+    
+    @media(max-width:480px){
+        .history-header h2{
+            font-size:1rem;
+        }
+        
+        table{
+            font-size:0.7rem;
+        }
+        
+        th, td{
+            padding:0.4rem;
+        }
+        
+        .badge{
+            padding:0.15rem 0.4rem;
+            font-size:0.6rem;
+        }
+        
+        .item-box{
+            font-size:0.7rem;
+            margin-bottom:0.1rem;
+        }
+        
+        .total{
+            font-size:0.85rem;
+        }
+        
+        .btn-danger{
+            padding:0.25rem 0.4rem;
+            font-size:0.65rem;
+        }
+        
+        .muted{
+            font-size:0.75rem;
+        }
+    }
 
 </style>
 
@@ -112,7 +184,7 @@
         <h2>📜 History Transaksi Kasir</h2>
     </div>
 
-    <div style="overflow-x:auto;">
+    <div style="overflow-x:auto; -webkit-overflow-scrolling: touch;">
 
         <table>
 
@@ -220,6 +292,16 @@
         </table>
 
     </div>
+    
+    <style>
+        @media(max-width:768px){
+            div[style*="overflow-x:auto"]{
+                -webkit-overflow-scrolling: touch;
+                border-radius: 0.75rem;
+                border: 1px solid #e5e7eb;
+            }
+        }
+    </style>
 
 </div>
 

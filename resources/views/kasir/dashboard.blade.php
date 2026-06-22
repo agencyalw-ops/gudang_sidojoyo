@@ -35,6 +35,99 @@
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
         gap: 0.8rem;
     }
+    
+    @media(max-width:1024px){
+        .pos-grid{
+            grid-template-columns: 1fr 300px;
+        }
+        
+        .product-grid{
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+    }
+    
+    @media(max-width:768px){
+        .pos-grid{
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+        
+        .product-grid{
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.6rem;
+        }
+        
+        .product-card{
+            min-height: 120px;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+        }
+        
+        .product-title{
+            font-size: 0.9rem;
+        }
+        
+        .search-box input{
+            font-size: 16px;
+            padding: 0.75rem;
+        }
+        
+        .cart-item{
+            font-size: 0.75rem;
+            padding: 0.4rem;
+        }
+        
+        .qty-btn{
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .btn-checkout,
+        .btn-clear{
+            padding: 0.6rem;
+            font-size: 0.9rem;
+        }
+    }
+    
+    @media(max-width:480px){
+        .pos-header{
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .pos-header h3{
+            font-size: 1.1rem;
+        }
+        
+        .product-grid{
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.5rem;
+        }
+        
+        .product-card{
+            min-height: 110px;
+            padding: 0.6rem;
+            font-size: 0.75rem;
+        }
+        
+        .product-title{
+            font-size: 0.8rem;
+        }
+        
+        .product-price{
+            font-size: 0.75rem;
+        }
+        
+        .product-stock{
+            font-size: 0.65rem;
+        }
+        
+        .total-section{
+            padding: 0.6rem;
+            font-size: 0.85rem;
+        }
+    }
 
     .product-card {
         background: #fff;

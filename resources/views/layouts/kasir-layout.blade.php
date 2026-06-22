@@ -46,6 +46,11 @@
             padding: 0.5rem 0.7rem;
             border-radius: 0.5rem;
             cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
         }
 
         /* SIDEBAR */
@@ -109,6 +114,69 @@
         /* CONTENT */
         .kasir-content {
             padding: 1.5rem;
+        }
+        
+        /* RESPONSIVE */
+        @media(max-width:768px){
+            .kasir-topbar{
+                padding: 0.75rem 1rem;
+                gap: 0.5rem;
+            }
+            
+            .kasir-brand{
+                gap: 0.75rem;
+            }
+            
+            .kasir-brand strong{
+                font-size: 0.95rem;
+            }
+            
+            .kasir-brand small{
+                font-size: 0.75rem;
+            }
+            
+            .kasir-topbar > div:last-child{
+                font-size: 0.9rem;
+            }
+            
+            .kasir-content{
+                padding: 1rem;
+            }
+        }
+        
+        @media(max-width:480px){
+            .kasir-topbar{
+                padding: 0.6rem 0.75rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .kasir-brand{
+                width: 100%;
+                gap: 0.5rem;
+            }
+            
+            .kasir-brand strong{
+                font-size: 0.85rem;
+            }
+            
+            .kasir-brand small{
+                font-size: 0.7rem;
+            }
+            
+            .kasir-topbar > div:last-child{
+                font-size: 0.8rem;
+                width: 100%;
+            }
+            
+            .kasir-content{
+                padding: 0.75rem;
+            }
+            
+            .sidebar{
+                width: 200px;
+            }
         }
     </style>
 </head>

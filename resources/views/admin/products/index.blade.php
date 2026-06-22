@@ -113,6 +113,87 @@
         gap:0.4rem;
         flex-wrap:wrap;
     }
+    
+    /* RESPONSIVE */
+    @media(max-width:768px){
+        .header{
+            flex-direction:column;
+            align-items:flex-start;
+            gap:1rem;
+        }
+        
+        .header h2{
+            font-size:1.1rem;
+        }
+        
+        .btn-group{
+            width:100%;
+            gap:0.4rem;
+        }
+        
+        .btn-group .btn{
+            flex:1;
+            text-align:center;
+            padding:0.5rem;
+        }
+        
+        table{
+            font-size:0.8rem;
+        }
+        
+        th, td{
+            padding:0.6rem;
+        }
+        
+        .badge{
+            padding:0.2rem 0.5rem;
+            font-size:0.65rem;
+        }
+        
+        .action-group{
+            flex-direction:column;
+            gap:0.3rem;
+        }
+        
+        .btn{
+            padding:0.3rem 0.5rem;
+            font-size:0.7rem;
+            width:100%;
+            text-align:center;
+        }
+    }
+    
+    @media(max-width:480px){
+        .header h2{
+            font-size:1rem;
+        }
+        
+        .btn-group{
+            flex-direction:column;
+        }
+        
+        .btn-group .btn{
+            width:100%;
+        }
+        
+        table{
+            font-size:0.7rem;
+        }
+        
+        th, td{
+            padding:0.4rem;
+        }
+        
+        .badge{
+            padding:0.15rem 0.4rem;
+            font-size:0.6rem;
+        }
+        
+        .btn{
+            padding:0.25rem 0.4rem;
+            font-size:0.65rem;
+        }
+    }
 
 </style>
 
@@ -127,7 +208,7 @@
         </div>
     </div>
 
-    <div style="overflow-x:auto;">
+    <div style="overflow-x:auto; -webkit-overflow-scrolling: touch;">
 
         <table>
 

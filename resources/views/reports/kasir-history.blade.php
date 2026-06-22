@@ -98,6 +98,70 @@
         color: #64748b;
     }
     .text-muted-sm {
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+    
+    /* RESPONSIVE */
+    @media(max-width:768px){
+        .kasir-header h2{
+            font-size:1.1rem;
+        }
+        
+        .filter-form{
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+        
+        .filter-actions{
+            flex-direction: row;
+            width: 100%;
+        }
+        
+        .summary-grid{
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .summary-value{
+            font-size: 1.25rem;
+        }
+        
+        table{
+            font-size: 0.8rem;
+        }
+        
+        th, td{
+            padding: 0.6rem;
+        }
+        
+        .badge{
+            padding: 2px 6px;
+            font-size: 11px;
+        }
+    }
+    
+    @media(max-width:480px){
+        .summary-grid{
+            grid-template-columns: 1fr;
+        }
+        
+        .summary-card{
+            padding: 0.75rem;
+        }
+        
+        table{
+            font-size: 0.7rem;
+        }
+        
+        th, td{
+            padding: 0.4rem;
+        }
+        
+        .item-line{
+            font-size: 0.7rem;
+        }
+    }
         font-size: 0.85rem;
         color: #64748b;
     }

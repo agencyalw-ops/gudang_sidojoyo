@@ -60,4 +60,39 @@ body {
     text-align: left;
 }
 
+/* RESPONSIVE UTILITIES */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding-top: 60px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .title {
+        font-size: 28px;
+    }
+    
+    .subtitle {
+        font-size: 14px;
+    }
+    
+    .btn {
+        padding: 10px 18px;
+        font-size: 14px;
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    .card {
+        margin-top: 20px;
+        padding: 15px;
+    }
+}
+
 

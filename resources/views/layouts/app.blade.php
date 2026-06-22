@@ -44,6 +44,7 @@
             top:0;
             left:0;
             height:100vh;
+            z-index:999;
         }
 
         .sidebar-header{
@@ -159,16 +160,107 @@
 
         /* RESPONSIVE */
         @media(max-width:768px){
-            .sidebar{display:none;}
-            .main{margin-left:0;}
+            body{
+                flex-direction:column;
+            }
+            
+            .sidebar{
+                position:fixed;
+                top:0;
+                left:-260px;
+                height:100vh;
+                transition:0.3s;
+                z-index:999;
+                overflow-y:auto;
+            }
+            
+            .sidebar.active{
+                left:0;
+            }
+            
+            .sidebar-overlay{
+                position:fixed;
+                inset:0;
+                background:rgba(0,0,0,0.4);
+                display:none;
+                z-index:998;
+            }
+            
+            .sidebar-overlay.active{
+                display:block;
+            }
+            
+            .main{
+                margin-left:0;
+                width:100%;
+            }
+            
+            .topbar{
+                display:flex;
+                align-items:center;
+                gap:1rem;
+                padding:1rem;
+            }
+            
+            .menu-toggle{
+                background:var(--primary);
+                color:white;
+                border:none;
+                padding:0.5rem 0.7rem;
+                border-radius:0.5rem;
+                cursor:pointer;
+                font-size:1.2rem;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+            }
+            
+            .content{
+                padding:1rem;
+            }
+            
+            table{
+                font-size:0.8rem;
+            }
+            
+            th, td{
+                padding:0.6rem;
+            }
+        }
+        
+        @media(max-width:480px){
+            .topbar{
+                padding:0.75rem;
+                font-size:0.9rem;
+            }
+            
+            .content{
+                padding:0.75rem;
+            }
+            
+            table{
+                font-size:0.7rem;
+            }
+            
+            th, td{
+                padding:0.4rem;
+            }
+            
+            .badge{
+                padding:0.2rem 0.4rem;
+                font-size:0.65rem;
+            }
         }
     </style>
 </head>
 
 <body>
 
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
 
         <div class="sidebar-header">
             📦 Sidojoyo
@@ -229,7 +321,8 @@
     <div class="main">
 
         <div class="topbar">
-            {{ $title ?? 'Dashboard' }}
+            <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()" style="display:none;">☰</button>
+            <span>{{ $title ?? 'Dashboard' }}</span>
         </div>
 
         <div class="content">
@@ -247,6 +340,30 @@
         </div>
 
     </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        
+        // Show menu toggle on mobile
+        function updateMenuToggle() {
+            const menuToggle = document.getElementById('menuToggle');
+            if (window.innerWidth <= 768) {
+                menuToggle.style.display = 'flex';
+            } else {
+                menuToggle.style.display = 'none';
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+            }
+        }
+        
+        window.addEventListener('resize', updateMenuToggle);
+        updateMenuToggle();
+    </script>
 
 </body>
 </html>

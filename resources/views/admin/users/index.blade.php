@@ -132,6 +132,111 @@
     .btn-edit:hover{
         background:#2563eb;
     }
+    
+    /* RESPONSIVE */
+    @media(max-width:768px){
+        .page-header{
+            flex-direction:column;
+            align-items:flex-start;
+            gap:1rem;
+        }
+        
+        .page-header h2{
+            font-size:1.1rem;
+        }
+        
+        .page-header p{
+            font-size:0.85rem;
+        }
+        
+        .stats-grid{
+            grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+            gap:0.75rem;
+            margin-bottom:1rem;
+        }
+        
+        .stat-card{
+            padding:1rem;
+        }
+        
+        .stat-label{
+            font-size:0.75rem;
+        }
+        
+        .stat-value{
+            font-size:1.5rem;
+        }
+        
+        .section-title{
+            font-size:1rem;
+            margin:1rem 0 0.75rem;
+        }
+        
+        table{
+            font-size:0.8rem;
+        }
+        
+        th, td{
+            padding:0.6rem;
+        }
+        
+        .action-group{
+            flex-direction:column;
+            gap:0.3rem;
+        }
+        
+        .btn-sm{
+            padding:0.3rem 0.5rem;
+            font-size:0.7rem;
+            width:100%;
+            text-align:center;
+        }
+        
+        .badge{
+            padding:0.2rem 0.5rem;
+            font-size:0.65rem;
+        }
+    }
+    
+    @media(max-width:480px){
+        .page-header{
+            gap:0.75rem;
+        }
+        
+        .page-header h2{
+            font-size:1rem;
+        }
+        
+        .stats-grid{
+            grid-template-columns:repeat(2,1fr);
+            gap:0.5rem;
+        }
+        
+        .stat-card{
+            padding:0.75rem;
+        }
+        
+        .stat-label{
+            font-size:0.7rem;
+        }
+        
+        .stat-value{
+            font-size:1.25rem;
+        }
+        
+        table{
+            font-size:0.7rem;
+        }
+        
+        th, td{
+            padding:0.4rem;
+        }
+        
+        .btn-sm{
+            padding:0.25rem 0.4rem;
+            font-size:0.65rem;
+        }
+    }
 </style>
 
 <div class="page-header">
